@@ -1,5 +1,4 @@
 weaviate-client
-weaviate
 streamlit
 PIL
 requests
