@@ -70,7 +70,7 @@ def connect_to_weaviate():
         pass
     
     
-    st.success("Connected to Weaviate successfully!")
+    st.success("✅ Connected to Weaviate successfully! ")
     
     return client
 
@@ -129,10 +129,10 @@ def create_patient_schema(client):
 
 # Set the directory where your images are stored
 image_dir = 'images'
-
+brain_url = st.secrets["brain_url"]
 # Use Streamlit secrets for API header
 BRAIN_HEADER = st.secrets["brain_api"]
-API_URL = "https://api-inference.huggingface.co/models/DunnBC22/yolos-tiny-Brain_Tumor_Detection"
+API_URL = brain_url
 headers = {"Authorization": BRAIN_HEADER}
 
 
@@ -164,22 +164,16 @@ def load_images(image_dir):
     return images
 
 def app_home():
-    st.title("Radiology Image Viewer")
+    st.title("Radiology Image Viewer 🏠")
     st.markdown("Welcome to the Radiology Image Viewer. Select an option from the left sidebar to begin.")
 
-
-
-    if st.button("Create Name Class @ Weaviate", key="create_name_class"):    
-        
-        st.success("Name Class Created !")
-            
-            
+                
 
             
 
 
 def app_patient_details():
-    st.title("Patient Details")
+    st.title("Patient Details 📝")
     
     client = None  # Initialize client to None
 
@@ -208,7 +202,7 @@ def app_patient_details():
             patients = client.collections.get("Patient")
             patients.data.insert(patients_obj)  # This uses batching under the hood
             
-            st.success(f"Patient Details Saved: {first_name} !")
+            st.success(f"Patient Details Saved: {first_name} 💾 ! ")
 
 
 
@@ -216,7 +210,7 @@ def app_patient_details():
 
 
 def app_image_analysis():
-    st.title("Image Analysis")
+    st.title("Image Analysis 🔍")
     images = load_images(image_dir)
     if images:
         selected_image = st.selectbox('Select an image:', images)
@@ -230,41 +224,45 @@ def app_image_analysis():
             st.image(image, caption=os.path.basename(selected_image), use_column_width=True)
 
         # Perform analysis and display results in the second column
-        if st.button('Perform Analysis'):
+        if st.button('Perform Analysis 🔎'):
             output = query(selected_image)
-            boxes = []
-            if output:
+            if isinstance(output, list):
+                boxes = []
                 for result in output:
-                    box = result.get("box", {})
-                    xmin, ymin, xmax, ymax = box.get("xmin"), box.get("ymin"), box.get("xmax"), box.get("ymax")
-                    boxes.append((xmin, ymin, xmax, ymax))
-            if boxes:
-                image_with_boxes = draw_boxes(selected_image, boxes)
-                with col2:
-                    st.write("Analysis Result")
-                    st.image(image_with_boxes, caption="Analysis Result", use_column_width=True)
+                    # Ensure each result is a dictionary and has a "box" key
+                    if isinstance(result, dict) and "box" in result:
+                        box = result["box"]
+                        xmin, ymin, xmax, ymax = box.get("xmin"), box.get("ymin"), box.get("xmax"), box.get("ymax")
+                        boxes.append((xmin, ymin, xmax, ymax))
+                if boxes:
+                    image_with_boxes = draw_boxes(selected_image, boxes)
+                    with col2:
+                        st.write("Analysis Result")
+                        st.image(image_with_boxes, caption="Analysis Result", use_column_width=True)
+                else:
+                    with col2:
+                        st.write("Analysis Result")
+                        st.write("No significant findings.")
             else:
-                with col2:
-                    st.write("Analysis Result")
-                    st.write("No significant findings.")
+                st.error("Unexpected response format. Please check the API response. ❗")
     else:
-        st.error("No images found in the specified directory. Please check the directory path.")
+        st.error("No images found in the specified directory. Please check the directory path. ⚠️")
 
 
 def app_generate_report():
-    st.title("Generate Report")
+    st.title("Generate Report 📊")
     case_id = st.text_input("Case ID", "Enter Case ID here...")
     findings = st.text_area("Findings", "Describe the findings here...")
     conclusion = st.text_area("Conclusion", "Enter the conclusion here...")
-    if st.button("Generate Report"):
-        st.success("Report generated successfully for Case ID: " + case_id)
+    if st.button("Generate Report 📄"):
+        st.success("Report generated successfully for Case ID: " + case_id + " 🎉")
         st.markdown("### Findings")
         st.write(findings)
         st.markdown("### Conclusion")
         st.write(conclusion)
 
 def main():
-    st.sidebar.title('Navigation')
+    st.sidebar.title('Navigation 🧭')
     app_mode = st.sidebar.radio("Choose the app mode",
                                 ["Home", "Patient Details", "Image Analysis", "Generate Report"])
     if app_mode == "Home":
@@ -278,7 +276,7 @@ def main():
 
     # Footer
     st.sidebar.markdown('---')
-    st.sidebar.markdown('© 2024 Radiology Image Viewer Prototype')
+    st.sidebar.markdown('© 2024 Radiology Image Viewer IntelliScan Inc. 🧠')
 
 if __name__ == '__main__':
     main()
