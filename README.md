@@ -1,7 +1,7 @@
 
 ---
 
-# IntelliScan: AI-Powered MRI Specialist 🧠
+# IntelliScan: AI-Powered MRI Specialist 🧠 ( NEW UPDATE COMMING SOON ! )
 
 ## Overview
 IntelliScan is an innovative Streamlit application designed to revolutionize the way hospitals analyze MRI scans. By leveraging advanced AI technologies, IntelliScan provides accurate, efficient, and automated analysis of MRI images, significantly reducing the time and effort required by radiologists to generate reports. This README provides detailed instructions on setting up and using IntelliScan to its full potential.
@@ -21,7 +21,7 @@ IntelliScan is an innovative Streamlit application designed to revolutionize the
 - PIL (Python Imaging Library) 🖼️
 - Requests 📦
 
-### Setup
+### Setup ( NEW UPDATE COMMING SOON ! )
 1. Clone the IntelliScan repository:
    ```
    git clone <repository-url>
