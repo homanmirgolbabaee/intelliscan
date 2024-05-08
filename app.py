@@ -6,122 +6,45 @@ import json
 import time
 
 
-
-## @@@ Weaviate Setup @@@
-
-import weaviate
-import weaviate.classes as wvc
 import os
 import requests
 import json
-from weaviate.schema import Schema
+
+import sqlite3
 
 
-WCS_API_KEY = st.secrets["WCS_API_KEY"]
-WCS_CLUSTER_URL= st.secrets["WCS_CLUSTER_URL"]
-OPENAI_APIKEY=st.secrets["OPENAI_APIKEY"]
-
-
-
-import weaviate
-from weaviate import Client
-from weaviate.util import generate_uuid5
-
-def connect_to_weaviate():
-    """
-    Connect to the Weaviate instance using Streamlit secrets or environment variables.
-    """
-    client = weaviate.connect_to_wcs(
-        cluster_url=st.secrets["WCS_CLUSTER_URL"],
-        auth_credentials=weaviate.auth.AuthApiKey(st.secrets["WCS_API_KEY"]),
-        headers={
-            "X-OpenAI-Api-Key": st.secrets["OPENAI_APIKEY"]
-        },
-        skip_init_checks=True
-    )
-    
-    try:
-          
-        #patient_fn = client.collections.create(
-        #name="first_name",
-        #vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(),  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
-        #generative_config=wvc.config.Configure.Generative.openai()  # Ensure the `generative-openai` module is used for generative queries
-        #)
-        #patient_ln = client.collections.create(
-        #name="last_name",
-        #vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(),  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
-        #generative_config=wvc.config.Configure.Generative.openai()  # Ensure the `generative-openai` module is used for generative queries            
-        #)
-        #patient_age = client.collections.create(
-        #name="age",
-        #vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(),  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
-        #generative_config=wvc.config.Configure.Generative.openai()  # Ensure the `generative-openai` module is used for generative queries            
-        #)
-        #patient_case_id = client.collections.create (
-        #name="case_id",
-        #vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(),  # If set to "none" you must always provide vectors yourself. Could be any other "text2vec-*" also.
-        #generative_config=wvc.config.Configure.Generative.openai()  # Ensure the `generative-openai` module is used for generative queries       
-        #)
-
-    
-        pass
-        
-    finally:
-        pass
-    
+def init_db():
+    conn = sqlite3.connect('patient_data.db')  # This will create the database file if it does not exist
+    c = conn.cursor()
+    # Create table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS patients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT,
+            last_name TEXT,
+            age INTEGER,
+            gender TEXT,
+            case_id TEXT UNIQUE
+        )
+    ''')
+    conn.commit()
+    conn.close()
     
     st.success("✅ Connected to Weaviate successfully! ")
-    
-    return client
 
 
-        
+def get_db_connection():
+    conn = sqlite3.connect('patient_data.db')
+    conn.row_factory = sqlite3.Row  # This enables name-based access to columns
+    return conn        
 
 
-
-
-def create_patient_schema(client):
-    """
-    Create the 'Patient' schema in Weaviate.
-    """
-    schema = {
-        "classes": [{
-            "class": "Patient",
-            "description": "A class to store patient details",
-            "properties": [
-                {
-                    "name": "first_name",
-                    "dataType": ["string"],
-                    "description": "The first name of the patient",
-                    # Additional configuration for vectorization can be added here
-                },
-                {
-                    "name": "last_name",
-                    "dataType": ["string"],
-                    "description": "The last name of the patient",
-                    # Additional configuration for vectorization can be added here
-                },
-                {
-                    "name": "age",
-                    "dataType": ["string"],
-                    "description": "The age of the patient",
-                    # Additional configuration for validation or other purposes can be added here
-                },
-                {
-                    "name": "case_id",
-                    "dataType": ["string"],
-                    "description": "The unique case ID for the patient",
-                    # Additional configuration for unique constraints can be added here if supported
-                }
-            ],
-            "vectorizer": "text2vec-openai",
-            # Add generative module configuration if needed
-        }]
-    }
-    client.schema.delete_all()  # Caution: This deletes the existing schema. Use with care.
-    client.schema.create(schema)
-
-
+def query_patient_details(case_id):
+    conn = get_db_connection()
+    c = conn.cursor()
+    patient = c.execute('SELECT * FROM patients WHERE case_id = ?', (case_id,)).fetchone()
+    conn.close()
+    return patient
 
 
 
@@ -129,12 +52,6 @@ def create_patient_schema(client):
 
 # Set the directory where your images are stored
 image_dir = 'images'
-brain_url = st.secrets["brain_url"]
-# Use Streamlit secrets for API header
-BRAIN_HEADER = st.secrets["brain_api"]
-API_URL = brain_url
-headers = {"Authorization": BRAIN_HEADER}
-
 
 
 
@@ -145,8 +62,8 @@ headers = {"Authorization": BRAIN_HEADER}
 def query(filename):
     with open(filename, "rb") as f:
         data = f.read()
-    response = requests.post(API_URL, headers=headers, data=data)
-    return response.json()
+   #response = requests.post(API_URL, headers=headers, data=data)
+   # return response.json()
 
 def draw_boxes(image_path, boxes):
     with Image.open(image_path) as im:
@@ -178,7 +95,8 @@ def app_patient_details():
     client = None  # Initialize client to None
 
     if st.button("Patient Database"):
-        client = connect_to_weaviate()  # Connect to Weaviate
+        #client = connect_to_weaviate()  # Connect to Weaviate
+        pass
         
 
     
@@ -189,20 +107,17 @@ def app_patient_details():
         gender = st.radio("Gender", ["Male", "Female", "Other"])
         case_id = st.text_input("Case ID")
         submit_button = st.form_submit_button("Submit")
-        if submit_button:
-            
-            client = connect_to_weaviate()
-
-            patients_obj= {
-                "first_name": first_name,
-                "last_name": last_name,
-                "age": str(age),
-                "case_id" : float(case_id)
-            }
-            patients = client.collections.get("Patient")
-            patients.data.insert(patients_obj)  # This uses batching under the hood
-            
-            st.success(f"Patient Details Saved: {first_name} 💾 ! ")
+        
+    if submit_button:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO patients (first_name, last_name, age, gender, case_id)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (first_name, last_name, age, gender, case_id))
+        conn.commit()
+        conn.close()
+        st.success(f"Patient Details Saved: {first_name} 💾 ! ")
 
 
 
@@ -262,6 +177,8 @@ def app_generate_report():
         st.write(conclusion)
 
 def main():
+    init_db()  # Initialize the database and tables
+
     st.sidebar.title('Navigation 🧭')
     app_mode = st.sidebar.radio("Choose the app mode",
                                 ["Home", "Patient Details", "Image Analysis", "Generate Report"])
