@@ -1,0 +1,6 @@
+Patient ID,Name,Age,Gender,Last Visit Date,Diagnosis,Medication,Doctor's Notes
+101,Alex Johnson,29,Male,2024-04-15,Asthma,Inhaler,Follow-up in 3 months
+102,Maria Garcia,34,Female,2024-04-20,Hypertension,ACE inhibitors,Monitor blood pressure weekly
+103,James Smith,22,Male,2024-04-18,Diabetes,Insulin,Adjust insulin dosage
+104,Emma Wilson,45,Female,2024-04-10,Chronic Pain,Analgesics,Review in 6 weeks
+105,David Lee,38,Male,2024-04-22,Anxiety,Anxiolytics,Therapy recommended
