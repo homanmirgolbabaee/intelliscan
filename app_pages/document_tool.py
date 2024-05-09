@@ -49,7 +49,7 @@ def render():
             
             
     # Informational message for users
-    st.info("Hint: Ask about today's patients report?")
+    st.info("Hint: Ask about Patient 101 (summary,last visit,doctor notes, medications) ?")
     
     
     # Chat input for querying
