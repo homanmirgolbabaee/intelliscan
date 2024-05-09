@@ -1,7 +1,6 @@
 streamlit
-Pillow
+pillow
 db-sqlite3
-dotenv
 llama_index
 openai
 llama-index-llms-ollama
