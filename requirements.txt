@@ -1,7 +1,7 @@
 streamlit
 pillow
 db-sqlite3
-llama_index
+llama-index
 openai
 llama-index-llms-ollama
 llama_index.embeddings.huggingface
