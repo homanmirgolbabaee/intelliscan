@@ -1,4 +1,9 @@
-weaviate-client
 streamlit
-pillow
-requests
+Pillow
+sqlite3
+dotenv
+llama_index
+openai
+llama-index-llms-ollama
+llama_index.embeddings.huggingface
+llama-index-embeddings-instructor
