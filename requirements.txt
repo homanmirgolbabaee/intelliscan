@@ -1,6 +1,6 @@
 streamlit
 Pillow
-sqlite3
+db-sqlite3
 dotenv
 llama_index
 openai
