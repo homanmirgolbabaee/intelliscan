@@ -1,0 +1,6 @@
+PromptID,OriginalPrompt,RefinedPrompt,Category,SuccessRate,UsageCount,LastUsedDate,Creator,Model
+001,Write me an email about meeting,Draft an email requesting a meeting update,Email Writing,90%,15,2024-04-21,System,GPT-4
+002,Generate SQL for employee data,Create SQL query to extract employee data,Data Analysis,85%,30,2024-04-20,Alice,Codex
+003,Help me fix this code,Debug and correct the following code block,Code Generation,80%,20,2024-04-19,Bob,Codex
+004,Suggest a healthy dinner recipe,Propose a recipe for a balanced dinner suitable for four people,Cooking,95%,10,2024-04-18,Carol,GPT-4
+005,Create a summary for an article,Generate a concise summary of the key points in the following article,Content Creation,88%,25,2024-04-17,Dave,GPT-4
