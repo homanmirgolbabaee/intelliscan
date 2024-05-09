@@ -6,3 +6,5 @@ openai
 llama-index-llms-ollama
 llama_index.embeddings.huggingface
 llama-index-embeddings-instructor
+llama-index-core
+llama-index-llms-openai
