@@ -105,7 +105,21 @@ def create_pdf(patient_info, result):
 
 # Streamlit Page
 def display():
+
+
     st.title("Emergency Room AI System")
+    
+    st.sidebar.header("Configuration")
+    openai_api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
+    
+    if openai_api_key:
+        st.sidebar.success("API key loaded successfully.")
+    else:
+        st.sidebar.error("Please enter your OpenAI API key.")
+        return
+    
+        
+    # st.title("Emergency Room AI System")
     
     st.header("Enter Patient Details")
     name = st.text_input("Name")
