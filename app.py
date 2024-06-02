@@ -1,9 +1,9 @@
 import streamlit as st
-from app_pages import home, patient_details, image_analysis, generate_report,document_tool
+from app_pages import home, patient_details, image_analysis, generate_report,document_tool,emergency_crew
 
 def main():
     st.sidebar.title('Navigation 🧭')
-    app_mode = st.sidebar.radio("Choose the app mode", ["Home", "Patient Details", "Image Analysis", "Generate Report","Document Assistant"])
+    app_mode = st.sidebar.radio("Choose the app mode", ["Home", "Patient Details", "Image Analysis", "Generate Report","Document Assistant","Emergency Room Assistant"])
     
     if app_mode == "Home":
         home.display()
@@ -15,7 +15,7 @@ def main():
         generate_report.display()
     elif app_mode == "Document Assistant":
         document_tool.render()
-    elif app_mode == "Emergency Crew":
+    elif app_mode == "Emergency Room Assistant":
         emergency_crew.display()
 if __name__ == '__main__':
     main()
