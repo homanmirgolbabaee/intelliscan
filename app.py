@@ -15,6 +15,7 @@ def main():
         generate_report.display()
     elif app_mode == "Document Assistant":
         document_tool.render()
-
+    elif app_mode == "Emergency Crew":
+        emergency_crew.display()
 if __name__ == '__main__':
     main()
